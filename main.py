@@ -2,6 +2,8 @@ import pkg_resources
 import requests 
 from datetime import datetime
 
+scanned_packages = 0
+vuln_packages = 0
 installed_packages = pkg_resources.working_set
 
 off='\033[0m'              
@@ -31,6 +33,7 @@ for package in installed_packages:
     try:
         response = requests.get(f"https://pypi.org/pypi/{package.project_name}/{package.version}/json")
         result = response.json()
+        scanned_packages += 1
     except KeyboardInterrupt:
         print(f"\nÇıkış yapılıyor...")
         break
@@ -41,6 +44,7 @@ for package in installed_packages:
     vulnerabilities = result.get("vulnerabilities", [])
     
     if vulnerabilities:
+        vuln_packages += 1
         print(f"{red}{'='*100}{off}")
         print(f"{blue}Paket: {cyan}{package.project_name} - {package.version}{off}")
         print(f"{red}{'='*100}{off}\n")
@@ -82,3 +86,8 @@ for package in installed_packages:
         print(f"{package.project_name}: {green}Güvenlik açığı tespit edilmedi{off}")
 
 print(f"\n{blue}Tarama tamamlandı!{off}")
+print(f"{yellow}Toplamda {scanned_packages} paket tarandı!{off}")
+if vuln_packages:
+    print(f"{red}Toplamda {vuln_packages} pakette güvenlik açığı tespit edildi{off}")
+else:
+    print(f"{green}Hiçbir pakette güvenlik açığı tespit edilmedi!{off}")
