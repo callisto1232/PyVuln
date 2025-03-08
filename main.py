@@ -31,6 +31,9 @@ for package in installed_packages:
     try:
         response = requests.get(f"https://pypi.org/pypi/{package.project_name}/{package.version}/json")
         result = response.json()
+    except KeyboardInterrupt:
+        print(f"\nÇıkış yapılıyor...")
+        break
     except Exception as e:
         print(f"{red}Hata: {package.project_name} paketi için bilgi alınamadı - {str(e)}{off}")
         continue
